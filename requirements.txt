@@ -1,0 +1,10 @@
+ipython
+tk
+matplotlib
+numpy
+pandas
+plotly
+pubchempy
+sklearn
+mordred
+rdkit
