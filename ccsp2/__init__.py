@@ -21,6 +21,7 @@ from rdkit import Chem
 from sklearn.feature_selection import RFECV
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.model_selection import GridSearchCV, StratifiedShuffleSplit, cross_val_predict, cross_validate
-from sklearn.preprocessing import StandardScalar
+from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVR
 from sklearn.utils import shuffle
+import io
