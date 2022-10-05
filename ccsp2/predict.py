@@ -49,7 +49,16 @@ def initial_ccs_prediction(x_train, y_train, x_test, y_test, x_target, outlier_r
     y_train_predicted = model.predict(x_train_scaled)
     y_test_predicted = model.predict(x_test_scaled)
     y_target_predicted = model.predict(x_target_scaled)
-    return x_train_clean, x_test_clean, x_target_clean, x_train_scaled, model, grid_results, y_train_predicted, y_train_cross_validation, y_test_predicted, y_target_predicted
+    return {'x_train_clean': x_train_clean,
+            'x_test_clean': x_test_clean,
+            'x_target_clean': x_target_clean,
+            'x_train_scaled': x_train_scaled,
+            'model': model,
+            'grid_results': grid_results,
+            'y_train_predicted': y_train_predicted,
+            'y_train_cross_validation': y_train_cross_validation,
+            'y_test_predicted': y_test_predicted,
+            'y_target_predicted': y_target_predicted}
 
 
 def regression_metrics(true_values, predicted_values):
@@ -153,7 +162,13 @@ def rfe_ccs_prediction(x_train_clean, y_train, x_test_clean, y_test, x_target_cl
     y_train_predicted_rfe = model_rfe.predict(x_rfe_scaled)
     y_test_predicted_rfe = model_rfe.predict(x_test_rfe_scaled)
     y_target_predicted_rfe = model_rfe.predict(x_target_rfe_scaled)
-    return model_rfe, grid_result_rfe, x_test_rfe, y_train_predicted_rfe, y_train_cross_validation_rfe, y_test_predicted_rfe, y_target_predicted_rfe
+    return {'model_rfe': model_rfe,
+            'grid_result_rfe': grid_result_rfe,
+            'x_test_rfe': x_test_rfe,
+            'y_train_predicted_rfe': y_train_predicted_rfe,
+            'y_train_cross_validation_rfe': y_train_cross_validation_rfe,
+            'y_test_predicted_rfe': y_test_predicted_rfe,
+            'y_target_predicted_rfe': y_target_predicted_rfe}
 
 
 def summary_plot(y_train, y_test, y_train_predicted, y_train_cross_validation, y_test_predicted,

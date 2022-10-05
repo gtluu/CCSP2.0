@@ -27,7 +27,7 @@ from sklearn.utils import shuffle
 import io
 
 
-def import_training_data(train_book_path, split_percentage, test_book_path=None):
+def import_training_data(train_book_path, split_percentage=50, test_book_path=None):
     if test_book_path is None:
         train_test_book = pd.read.csv(train_book_path)
         rand_master = train_test_book.reindex(np.random.permutation(train_test_book.index))
