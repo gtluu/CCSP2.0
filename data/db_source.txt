@@ -1,0 +1,2 @@
+CCS database obtained from Baker Lab Portal:
+https://brcwebportal.cos.ncsu.edu/baker/data/ccs.tsv
