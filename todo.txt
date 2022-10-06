@@ -1,1 +1,2 @@
 - write script to grab smiles or inchi from pubchem? or somewhere
+- update readme with installation instructions
