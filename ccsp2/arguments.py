@@ -7,7 +7,8 @@ def get_args():
                         required=True, type=str)
     parser.add_argument('--test', help='test dataset', default='', type=str)
     parser.add_argument('--query', help='query dataset to predict CCS for', default='', type=str)
-    parser.add_argument('--output', help='prediction results', default='', type=str)
+    parser.add_argument('--output', help='prediction results directory', default='', type=str)
     parser.add_argument('--split_percentage', help='percentage to split training dataset into test and train sets',
                         default=50, type=int)
+    parser.add_argument('--plot', help='output plots during analysis', action='store_true')
     return vars(parser.parse_args())
