@@ -24,7 +24,7 @@ from sklearn.model_selection import GridSearchCV, StratifiedShuffleSplit, cross_
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVR
 from sklearn.utils import shuffle
-import io
+from IPython.utils import io
 from ccsp2.model import *
 
 
@@ -127,7 +127,7 @@ def rfe_variable_selection(x_train_scaled, y_train, grid_results, plot=False):
     estimator = SVR(C=grid_results.best_params_['C'],
                     cache_size=500,
                     coef0=0.1,
-                    epsilon=grid_results.best_params['epsilon'],
+                    epsilon=grid_results.best_params_['epsilon'],
                     kernel='linear')
     rfecv = RFECV(estimator,
                   step=5,

@@ -24,11 +24,11 @@ from sklearn.model_selection import GridSearchCV, StratifiedShuffleSplit, cross_
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVR
 from sklearn.utils import shuffle
-import io
+from IPython.utils import io
 
 
-def calculate_descriptors(input_list, input_type='InChi'):
-    if input_type == 'InChi':
+def calculate_descriptors(input_list, input_type='InChI'):
+    if input_type == 'InChI':
         mol_list = [Chem.MolFromInchi(i) for i in input_list]
     elif input_type == 'SMILES':
         mol_list = [Chem.MolFromSmiles(i) for i in input_list]
@@ -45,9 +45,9 @@ def variable_assigner(train_book,
                       test_book,
                       target_book,
                       column_title='Input',
-                      train_input_type='InChi',
-                      test_input_type='InChi',
-                      target_input_type='InChi'):
+                      train_input_type='InChI',
+                      test_input_type='InChI',
+                      target_input_type='InChI'):
     x_train = calculate_descriptors(train_book[column_title], train_input_type)
     x_test = calculate_descriptors(test_book[column_title], test_input_type)
     x_target = calculate_descriptors(target_book[column_title], test_input_type)
@@ -83,7 +83,7 @@ def svr_model_linear(x_train, y_train, c_list=[2**(i) for i in range(-8, -1)], e
     gsc = GridSearchCV(estimator=SVR(kernel='linear'),
                        param_grid={'C': c_list, 'epsilon': epsilon_list},
                        cv=5,
-                       scoring='net_root_mean_squared_error',
+                       scoring='neg_root_mean_squared_error',
                        verbose=False,
                        n_jobs=-1)
     grid_result = gsc.fit(x_train, y_train)

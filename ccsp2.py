@@ -13,12 +13,12 @@ def run_ccsp2(args):
     elif args['test'] == '':
         train_book, test_book = import_training_data(args['train'], split_percentage=args['split_percentage'])
     target_book = import_query_data(args['query'])
-    train_input_type, train_input_errors = check_inputs(train_book, column_title='Input')
-    test_input_type, test_input_errors = check_inputs(test_book, column_title='Input')
-    target_input_type, target_input_errors = check_inputs(target_book, column_title='Input')
+    train_input_type, train_input_errors = check_inputs(train_book, column_title=args['identifier'])
+    test_input_type, test_input_errors = check_inputs(test_book, column_title=args['identifier'])
+    target_input_type, target_input_errors = check_inputs(target_book, column_title=args['identifier'])
 
     if len(train_input_errors) + len(test_input_errors) + len(target_input_errors) > 0:
-        if len(train_input_errors) > 0:
+        """if len(train_input_errors) > 0:
             print('Assuming the training input type:', train_input_type, '\n')
             print("The following training inputs returned errors:", '\n')
             for i in train_input_errors:
@@ -34,11 +34,16 @@ def run_ccsp2(args):
             for i in target_input_errors:
                 print(i, '\n')
         print("Please correct these inputs and try again.")
-        sys.exit()
+        sys.exit()"""
+        # instead of exiting, remove error entries from each book
+        train_book = train_book[~train_book[args['identifier']].isin(train_input_errors)]
+        test_book = test_book[~test_book[args['identifier']].isin(test_input_errors)]
+        target_book = target_book[~target_book[args['identifier']].isin(target_input_errors)]
 
     x_train, y_train, x_test, y_test, x_target = variable_assigner(train_book,
                                                                    test_book,
                                                                    target_book,
+                                                                   column_title=args['identifier'],
                                                                    train_input_type=train_input_type,
                                                                    test_input_type=test_input_type,
                                                                    target_input_type=target_input_type)
@@ -90,9 +95,9 @@ def run_ccsp2(args):
     test_book_output['Validation CCS Prediction RFE VS'] = rfe_prediction['y_test_predicted_rfe']
     target_book_output['Target CCS Prediction RFE VS'] = rfe_prediction['y_target_predicted_rfe']
 
-    train_book_output.to_csv(os.path.join(args['output'], 'train_book_output.csv'), index=True)
-    test_book_output.to_csv(os.path.join(args['output'], 'test_book_output.csv'), index=True)
-    target_book_output.to_csv(os.path.join(args['output'], 'target_book_output.csv'), index=True)
+    train_book_output.to_csv(os.path.join(args['output'], 'train_book_output.csv'), index=False)
+    test_book_output.to_csv(os.path.join(args['output'], 'test_book_output.csv'), index=False)
+    target_book_output.to_csv(os.path.join(args['output'], 'target_book_output.csv'), index=False)
 
     if args['plot']:
         summary_plot_all = summary_plot(y_train,

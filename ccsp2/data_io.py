@@ -29,7 +29,7 @@ import io
 
 def import_training_data(train_book_path, split_percentage=50, test_book_path=None):
     if test_book_path is None:
-        train_test_book = pd.read.csv(train_book_path)
+        train_test_book = pd.read_csv(train_book_path)
         rand_master = train_test_book.reindex(np.random.permutation(train_test_book.index))
         train_book = rand_master.sample(frac=split_percentage/100)
         test_book = pd.concat([train_test_book, train_book]).drop_duplicates(keep=False)
@@ -51,8 +51,8 @@ def check_inputs(book, column_title='Input'):
             compound = pcp.get_compounds(i, 'cid')
             if Chem.MolFromSmiles(compound[0].isomeric_smiles) is None:
                 input_errors.append(i)
-    elif 'InChi' in list(book[column_title])[0]:
-        input_type = 'InChi'
+    elif 'InChI' in list(book[column_title])[0]:
+        input_type = 'InChI'
         for i in book[column_title]:
             if Chem.MolFromInchi(i) is None:
                 input_errors.append(i)

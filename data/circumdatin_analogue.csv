@@ -1,0 +1,6 @@
+SMILES,Adducts,ID
+O=C1NC(C2=NC=3C=CC=CC3C(=O)N2C=4C=CC=CC14)C,M+H,COCONUT Circumdatin F
+C[C@H]1C2=NC3=CC=CC=C3C(=O)N2C4=CC=CC=C4C(=O)N1,M+H,NPAtlas Circumdatin F
+O=C(C1=CC=CC=C1N23)N[C@@H](C)C2=NC4=C(C=CC=C4)C3=O,M+H,ChemDraw Circumdatin F
+O=C1N[C@H](C)C2=NC3=C(C(N2C4=C1C=CC=C4)=O)C=CC=C3,M+H,Circumdatiin F Stacks
+O=C(C1=CC=CC=C1N23)NCC2=NC4=C(C=CC=C4)C3=O,M+H,Analogue
