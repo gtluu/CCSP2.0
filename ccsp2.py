@@ -112,17 +112,17 @@ def run_ccsp2(args):
         prediction_plot_calibration = prediction_plot(y_train,
                                                       initial_prediction['y_train_predicted'],
                                                       train_book,
-                                                      hover_column=['Compound Name'],
+                                                      hover_column=['Compound'],
                                                       title_string="Calibration Prediction")
         prediction_plot_cross_validation = prediction_plot(y_train,
                                                            initial_prediction['y_train_cross_validation'],
                                                            train_book,
-                                                           hover_column=['Compound Name'],
+                                                           hover_column=['Compound'],
                                                            title_string="Cross-Validation Prediction")
         prediction_plot_validation = prediction_plot(y_test,
                                                      initial_prediction['y_test_predicted'],
                                                      test_book,
-                                                     hover_column=['Compound Name'],
+                                                     hover_column=['Compound'],
                                                      title_string="Validation Prediction")
         model_diagnostic_plot = model_diagnostics_plot(initial_prediction['x_test_clean'],
                                                        initial_prediction['model'])
@@ -138,17 +138,17 @@ def run_ccsp2(args):
         prediction_plot_calibration_rfe = prediction_plot(y_train,
                                                           rfe_prediction['y_train_predicted_rfe'],
                                                           train_book,
-                                                          hover_column=['Compound Name'],
+                                                          hover_column=['Compound'],
                                                           title_string="Calibration Prediction")
         prediction_plot_cross_validation_rfe = prediction_plot(y_train,
                                                                rfe_prediction['y_train_cross_validation_rfe'],
                                                                train_book,
-                                                               hover_column=['Compound Name'],
+                                                               hover_column=['Compound'],
                                                                title_string="Cross-Validation Prediction")
         prediction_plot_validation_rfe = prediction_plot(y_test,
                                                          rfe_prediction['y_test_predicted_rfe'],
                                                          test_book,
-                                                         hover_column=['Compound Name'],
+                                                         hover_column=['Compound'],
                                                          title_string="Validation Prediction")
         model_diagnostic_plot_rfe = model_diagnostics_plot(rfe_prediction['x_test_rfe'],
                                                            rfe_prediction['model_rfe'])

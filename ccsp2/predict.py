@@ -85,7 +85,7 @@ def prediction_plot(true_values, predicted_values, input_book, hover_column=['Co
                                   width=900,
                                   height=500,
                                   hovermode='closest')
-    predict_plot_px.update_xaxes(title_test='Measured CCS (<span>&#8491;</span><sup>2</sup>)',
+    predict_plot_px.update_xaxes(title_text='Measured CCS (<span>&#8491;</span><sup>2</sup>)',
                                  title_font={'size': 15},
                                  title_standoff=25)
     predict_plot_px.update_yaxes(title_text='Predicted CCS (<span>&#8491;</span><sup>2</sup>)',
@@ -137,7 +137,7 @@ def rfe_variable_selection(x_train_scaled, y_train, grid_results, plot=False):
                   verbose=0,
                   n_jobs=-1)
     rfecv.fit(x_train_scaled, y_train)
-    if plot:
+    """if plot:
         plt.figure()
         plt.xlabel('Number of Features Selected')
         plt.ylabel('Negative root Mean Squared Error ($\AA^2$)')
@@ -145,7 +145,7 @@ def rfe_variable_selection(x_train_scaled, y_train, grid_results, plot=False):
         if 1 not in x_points:
             x_points = x_points + [1]
         plt.plot(x_points[::-1], rfecv.grid_scores_)
-        plt.show()
+        plt.show()"""
     return rfecv
 
 
@@ -221,7 +221,7 @@ def summary_plot(y_train, y_test, y_train_predicted, y_train_cross_validation, y
     plt.title('Calibration Prediction', fontsize=titlesize)
     plt.ylabel('Predicted CCS ($\AA^2$)', fontsize=labelsize)
     plt.xlabel('Measured CCS ($\AA^2$)', fontsize=labelsize)
-    plt.axis('sqaure')
+    plt.axis('square')
     plt.legend(loc='lower right', prop={'size': legendsize})
     plt.tick_params(axis='y', direction='inout', length=4)
     plt.tick_params(axis='x', direction='inout', length=4)

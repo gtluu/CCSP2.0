@@ -52,7 +52,7 @@ def variable_assigner(train_book,
     x_test = calculate_descriptors(test_book[column_title], test_input_type)
     x_target = calculate_descriptors(target_book[column_title], test_input_type)
     y_train = list(train_book['CCS'])
-    y_test = list(train_book['CCS'])
+    y_test = list(test_book['CCS'])
     return x_train, y_train, x_test, y_test, x_target
 
 

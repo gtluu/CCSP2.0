@@ -8,3 +8,5 @@ pubchempy
 sklearn
 mordred
 rdkit
+statsmodels
+kaleido
