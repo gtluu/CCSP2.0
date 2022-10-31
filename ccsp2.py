@@ -18,23 +18,6 @@ def run_ccsp2(args):
     target_input_type, target_input_errors = check_inputs(target_book, column_title=args['identifier'])
 
     if len(train_input_errors) + len(test_input_errors) + len(target_input_errors) > 0:
-        """if len(train_input_errors) > 0:
-            print('Assuming the training input type:', train_input_type, '\n')
-            print("The following training inputs returned errors:", '\n')
-            for i in train_input_errors:
-                print(i, '\n')
-        if len(test_input_errors) > 0:
-            print('Assuming the testing input type:', test_input_type, '\n')
-            print("The following testing inputs returned errors:", '\n')
-            for i in test_input_errors:
-                print(i, '\n')
-        if len(target_input_errors) > 0:
-            print('Assuming the target input type:', target_input_type, '\n')
-            print("The following target inputs returned errors:", '\n')
-            for i in target_input_errors:
-                print(i, '\n')
-        print("Please correct these inputs and try again.")
-        sys.exit()"""
         # instead of exiting, remove error entries from each book
         train_book = train_book[~train_book[args['identifier']].isin(train_input_errors)]
         test_book = test_book[~test_book[args['identifier']].isin(test_input_errors)]
@@ -64,26 +47,6 @@ def run_ccsp2(args):
                                         y_test,
                                         initial_prediction['x_target_clean'],
                                         rfecv)
-
-    '''if args['plot']:
-        summary_plot_all = summary_plot(y_train,
-                                        y_test,
-                                        initial_prediction['y_train_predicted'],
-                                        initial_prediction['y_train_cross_validation'],
-                                        initial_prediction['y_test_predicted'],
-                                        labelsize=12,
-                                        legendsize=12,
-                                        titlesize=14,
-                                        textsize=12)
-        summary_plot_rfe = summary_plot(y_train,
-                                        y_test,
-                                        rfe_prediction['y_train_predicted_rfe'],
-                                        rfe_prediction['y_train_cross_validation_rfe'],
-                                        rfe_prediction['y_test_predicted_rfe'],
-                                        labelsize=12,
-                                        legendsize=12,
-                                        titlesize=14,
-                                        textsize=12)'''
 
     train_book_output, test_book_output, target_book_output = train_book.copy(), test_book.copy(), target_book.copy()
     train_book_output['Calibration CCS Prediction'] = initial_prediction['y_train_predicted']

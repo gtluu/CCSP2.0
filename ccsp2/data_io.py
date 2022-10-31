@@ -45,7 +45,7 @@ def import_query_data(target_book_path):
 
 def check_inputs(book, column_title='Input'):
     input_errors = []
-    if type(list(book[column_title])[0]) is np.int64:
+    if isinstance(list(book[column_title])[0], int):
         input_type = 'CID'
         for i in book[column_title]:
             compound = pcp.get_compounds(i, 'cid')
@@ -62,3 +62,21 @@ def check_inputs(book, column_title='Input'):
             if Chem.MolFromSmiles(i) is None:
                 input_errors.append(i)
     return input_type, input_errors
+
+
+def get_compounds_from_cid(input_list):
+    cid_list = [int(i) for i in input_list]
+    reconstructed_cids = []
+    reconstructed_compounds = []
+    comp_val = 0
+    initial_val = 0
+    while comp_val < len(cid_list):
+        initial_val = comp_val
+        comp_val += 100
+        reconstructed_cids.extend(cid_list[initial_val:comp_val])
+        compounds_vals = pcp.get_compounds(cid_list[initial_val:comp_val], 'cid')
+        reconstructed_compounds.extend(compounds_vals)
+        progress = 100 * (initial_val) / len(cid_list)
+        if comp_val > len(cid_list):
+            progress = 100
+    return reconstructed_compounds
