@@ -24,7 +24,6 @@ from sklearn.model_selection import GridSearchCV, StratifiedShuffleSplit, cross_
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVR
 from sklearn.utils import shuffle
-from IPython.utils import io
 from ccsp2.model import *
 
 

@@ -24,7 +24,6 @@ from sklearn.model_selection import GridSearchCV, StratifiedShuffleSplit, cross_
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVR
 from sklearn.utils import shuffle
-from IPython.utils import io
 from ccsp2.data_io import *
 
 
@@ -38,8 +37,9 @@ def calculate_descriptors(input_list, input_type='InChI'):
         #compounds_list = get_compounds_from_cid(input_list)
         mol_list = [Chem.MolFromSmiles(i.isomeric_smiles) for i in compounds_list]
     calc = Calculator(descriptors, ignore_3D=True)
-    with io.capture_output() as captured:
-        descriptor_list = calc.pandas(mol_list)
+    #with io.capture_output() as captured:
+    #    descriptor_list = calc.pandas(mol_list)
+    descriptor_list = calc.pandas(mol_list)
     return descriptor_list
 
 
