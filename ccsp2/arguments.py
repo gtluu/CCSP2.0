@@ -26,6 +26,6 @@ def get_args():
     predict = parser.add_argument_group('Prediction Parameters')
     predict.add_argument('--query', help='query dataset to predict CCS for', default='', type=str)
     predict.add_argument('--model', help='model to be used to predict CCS. if not specified, a default model is used',
-                         default='', type=str)  # TODO: update the default later
+                         default='models/UnifiedCCSCompendium_cleaned_2022-10-25/model.ccsp2', type=str)
 
     return vars(parser.parse_args())
