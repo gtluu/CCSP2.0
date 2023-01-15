@@ -24,7 +24,6 @@ from sklearn.model_selection import GridSearchCV, StratifiedShuffleSplit, cross_
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVR
 from sklearn.utils import shuffle
-from IPython.utils import io
 from ccsp2.data_io import *
 
 
@@ -38,24 +37,19 @@ def calculate_descriptors(input_list, input_type='InChI'):
         #compounds_list = get_compounds_from_cid(input_list)
         mol_list = [Chem.MolFromSmiles(i.isomeric_smiles) for i in compounds_list]
     calc = Calculator(descriptors, ignore_3D=True)
-    with io.capture_output() as captured:
-        descriptor_list = calc.pandas(mol_list)
+    #with io.capture_output() as captured:
+    #    descriptor_list = calc.pandas(mol_list)
+    descriptor_list = calc.pandas(mol_list)
     return descriptor_list
 
 
-def variable_assigner(train_book,
-                      test_book,
-                      target_book,
-                      column_title='Input',
-                      train_input_type='InChI',
-                      test_input_type='InChI',
-                      target_input_type='InChI'):
-    x_train = calculate_descriptors(train_book[column_title], train_input_type)
-    x_test = calculate_descriptors(test_book[column_title], test_input_type)
-    x_target = calculate_descriptors(target_book[column_title], test_input_type)
-    y_train = list(train_book['CCS'])
-    y_test = list(test_book['CCS'])
-    return x_train, y_train, x_test, y_test, x_target
+def variable_assigner(book, column_title='Input', input_type='InChI', book_is_target=False):
+    x = calculate_descriptors(book[column_title], input_type)
+    if not book_is_target:
+        y = list(book['CCS'])
+        return x, y
+    elif book_is_target:
+        return x
 
 
 def clean_up_descriptors(input_frame):
@@ -115,3 +109,59 @@ def svr_model_linear(x_train, y_train, c_list=[2**(i) for i in range(-8, -1)], e
                                                  n_jobs=-1,
                                                  verbose=False)
     return best_svr, scores, grid_result, y_train_cross_validation
+
+
+def train_initial_model(x_train, y_train, x_test, y_test, outlier_removal=False, threshold=1000):
+    x_train_clean = clean_up_descriptors(x_train)
+    x_train_clean = drop_constant_column(x_train_clean)
+    x_test_clean = clean_up_descriptors(x_test)
+    x_train_clean_raw = x_train_clean
+    x_test_clean_raw = x_test_clean
+    common_columns = [col for col in set(x_train_clean.columns).intersection(x_test_clean.columns)]
+    x_train_clean, x_test_clean = x_train_clean[common_columns], x_test_clean[common_columns]
+    if outlier_removal:
+        x_test_clean, x_train_clean = remove_outlier(x_test_clean, x_train_clean, threshold)
+    common_columns = [col for col in set(x_train_clean.columns).intersection(x_test_clean.columns)]
+    x_train_clean, x_test_clean = x_train_clean[common_columns], x_test_clean[common_columns]
+    scaler = StandardScaler()
+    x_train_scaled = scaler.fit_transform(x_train_clean)
+    x_test_scaled = scaler.transform(x_test_clean)
+    model, scores, grid_results, y_train_cross_validation = svr_model_linear(x_train_scaled, y_train)
+    model.fit(x_train_scaled, y_train)
+    y_train_predicted = model.predict(x_train_scaled)
+    y_test_predicted = model.predict(x_test_scaled)
+    return {'x_train_clean_raw': x_train_clean_raw,
+            'x_test_clean_raw': x_test_clean_raw,
+            'x_train_clean': x_train_clean,
+            'x_test_clean': x_test_clean,
+            'x_train_scaled': x_train_scaled,
+            'x_test_scaled': x_test_scaled,
+            'model': model,
+            'grid_results': grid_results,
+            'scaler': scaler,
+            'y_train': y_train,
+            'y_test': y_test,
+            'y_train_predicted': y_train_predicted,
+            'y_train_cross_validation': y_train_cross_validation,
+            'y_test_predicted': y_test_predicted}
+
+
+def train_rfe_model(x_train_clean, y_train, x_test_clean, y_test, rfecv):
+    x_rfe = x_train_clean[x_train_clean.columns[rfecv.support_]]
+    x_test_rfe = x_test_clean[x_train_clean.columns[rfecv.support_]]
+    scaler = StandardScaler()
+    x_rfe_scaled = scaler.fit_transform(x_rfe)
+    x_test_rfe_scaled = scaler.transform(x_test_rfe)
+    model_rfe, scores_rfe, grid_result_rfe, y_train_cross_validation_rfe = svr_model_linear(x_rfe_scaled, y_train)
+    model_rfe.fit(x_rfe_scaled, y_train)
+    y_train_predicted_rfe = model_rfe.predict(x_rfe_scaled)
+    y_test_predicted_rfe = model_rfe.predict(x_test_rfe_scaled)
+    return {'model_rfe': model_rfe,
+            'grid_result_rfe': grid_result_rfe,
+            'rfecv': rfecv,
+            'scaler': scaler,
+            'y_train': y_train,
+            'x_test_rfe': x_test_rfe,
+            'y_train_predicted_rfe': y_train_predicted_rfe,
+            'y_train_cross_validation_rfe': y_train_cross_validation_rfe,
+            'y_test_predicted_rfe': y_test_predicted_rfe}

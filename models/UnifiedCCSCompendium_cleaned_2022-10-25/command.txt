@@ -1,0 +1,1 @@
+python ccsp2.py --workflow model --identifier InChI --train train_book_input.csv --test test_book_input.csv --model_fname model --plot

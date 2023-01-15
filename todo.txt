@@ -1,5 +1,3 @@
 - write script to grab smiles or inchi from pubchem? or somewhere
-- update readme with installation instructions
-- further modularize into separate scripts for model training/validation and CCS prediction
-- figure out how to save model
 - write scripts to work with data from databases for prediction (i.e. GNPS, NPAtlas, COCONUT)
+- fix pickling messing up initial prediction values

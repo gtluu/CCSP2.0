@@ -10,3 +10,4 @@ mordred
 rdkit
 statsmodels
 kaleido
+scikit-learn

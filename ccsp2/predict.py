@@ -24,41 +24,28 @@ from sklearn.model_selection import GridSearchCV, StratifiedShuffleSplit, cross_
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVR
 from sklearn.utils import shuffle
-from IPython.utils import io
 from ccsp2.model import *
 
 
-def initial_ccs_prediction(x_train, y_train, x_test, y_test, x_target, outlier_removal=False, threshold=1000):
-    x_train_clean = clean_up_descriptors(x_train)
-    x_train_clean = drop_constant_column(x_train_clean)
-    x_test_clean = clean_up_descriptors(x_test)
+def initial_ccs_prediction(initial_model_dict, x_target, outlier_removal=False, threshold=1000):
     x_target_clean = clean_up_descriptors(x_target)
-    common_columns = [col for col in set(x_train_clean.columns).intersection(x_test_clean.columns).intersection(x_target_clean.columns)]
-    x_train_clean, x_test_clean, x_target_clean = x_train_clean[common_columns], x_test_clean[common_columns], x_target_clean[common_columns]
+    common_columns = [col for col in set(initial_model_dict['x_train_clean_raw'].columns).intersection(initial_model_dict['x_test_clean_raw'].columns).intersection(x_target_clean.columns)]
+    initial_model_dict['x_train_clean_raw'] = initial_model_dict['x_train_clean_raw'][common_columns]
+    initial_model_dict['x_test_clean_raw'] = initial_model_dict['x_test_clean_raw'][common_columns]
+    x_target_clean = x_target_clean[common_columns]
     if outlier_removal:
-        x_test_clean, x_train_clean = remove_outlier(x_test_clean, x_train_clean, threshold)
-        x_target_clean, x_train_clean = remove_outlier(x_target_clean, x_train_clean, threshold)
-    common_columns = [col for col in set(x_train_clean.columns).intersection(x_test_clean.columns).intersection(x_target_clean.columns)]
-    x_train_clean, x_test_clean, x_target_clean = x_train_clean[common_columns], x_test_clean[common_columns], x_target_clean[common_columns]
-    scaler = StandardScaler()
-    x_train_scaled = scaler.fit_transform(x_train_clean)
-    x_test_scaled = scaler.transform(x_test_clean)
-    x_target_scaled = scaler.transform(x_target_clean)
-    model, scores, grid_results, y_train_cross_validation = svr_model_linear(x_train_scaled, y_train)
-    model.fit(x_train_scaled, y_train)
-    y_train_predicted = model.predict(x_train_scaled)
-    y_test_predicted = model.predict(x_test_scaled)
-    y_target_predicted = model.predict(x_target_scaled)
-    return {'x_train_clean': x_train_clean,
-            'x_test_clean': x_test_clean,
-            'x_target_clean': x_target_clean,
-            'x_train_scaled': x_train_scaled,
-            'model': model,
-            'grid_results': grid_results,
-            'y_train_predicted': y_train_predicted,
-            'y_train_cross_validation': y_train_cross_validation,
-            'y_test_predicted': y_test_predicted,
-            'y_target_predicted': y_target_predicted}
+        initial_model_dict['x_test_clean_raw'], initial_model_dict['x_train_clean_raw'] = remove_outlier(initial_model_dict['x_test_clean_raw'],
+                                                                                                         initial_model_dict['x_train_clean_raw'],
+                                                                                                         threshold)
+        x_target_clean, initial_model_dict['x_train_clean_raw'] = remove_outlier(x_target_clean,
+                                                                                 initial_model_dict['x_train_clean_raw'],
+                                                                                 threshold)
+    common_columns = [col for col in set(initial_model_dict['x_train_clean_raw'].columns).intersection(initial_model_dict['x_test_clean_raw'].columns).intersection(x_target_clean.columns)]
+    x_target_clean = x_target_clean[common_columns]
+    x_target_scaled = initial_model_dict['scaler'].transform(x_target_clean)
+    initial_model_dict['x_target_clean'] = x_target_clean
+    initial_model_dict['y_target_predicted'] = initial_model_dict['model'].predict(x_target_scaled)
+    return initial_model_dict
 
 
 def regression_metrics(true_values, predicted_values):
@@ -99,7 +86,7 @@ def prediction_plot(true_values, predicted_values, input_book, hover_column=['Co
                               y0=min(min(true_values), min(predicted_values)),
                               y1=max(max(true_values), max(predicted_values)),
                               line=dict(dash='dash'))
-    predict_plot_px.show()
+    #predict_plot_px.show()
     return predict_plot_px
 
 
@@ -119,7 +106,7 @@ def model_diagnostics_plot(x_block, model_name):
     model_dx_plot_px.update_xaxes(title_text='Descriptor Number',
                                   title_font={'size': 15},
                                   title_standoff=25)
-    model_dx_plot_px.show()
+    #model_dx_plot_px.show()
     return model_dx_plot_px
 
 
@@ -149,26 +136,11 @@ def rfe_variable_selection(x_train_scaled, y_train, grid_results, plot=False):
     return rfecv
 
 
-def rfe_ccs_prediction(x_train_clean, y_train, x_test_clean, y_test, x_target_clean, rfecv):
-    x_rfe = x_train_clean[x_train_clean.columns[rfecv.support_]]
-    x_test_rfe = x_test_clean[x_train_clean.columns[rfecv.support_]]
+def rfe_ccs_prediction(rfe_model_dict, x_target_clean, x_train_clean, rfecv):
     x_target_rfe = x_target_clean[x_train_clean.columns[rfecv.support_]]
-    scaler = StandardScaler()
-    x_rfe_scaled = scaler.fit_transform(x_rfe)
-    x_test_rfe_scaled = scaler.transform(x_test_rfe)
-    x_target_rfe_scaled = scaler.transform(x_target_rfe)
-    model_rfe, scores_rfe, grid_result_rfe, y_train_cross_validation_rfe = svr_model_linear(x_rfe_scaled, y_train)
-    model_rfe.fit(x_rfe_scaled, y_train)
-    y_train_predicted_rfe = model_rfe.predict(x_rfe_scaled)
-    y_test_predicted_rfe = model_rfe.predict(x_test_rfe_scaled)
-    y_target_predicted_rfe = model_rfe.predict(x_target_rfe_scaled)
-    return {'model_rfe': model_rfe,
-            'grid_result_rfe': grid_result_rfe,
-            'x_test_rfe': x_test_rfe,
-            'y_train_predicted_rfe': y_train_predicted_rfe,
-            'y_train_cross_validation_rfe': y_train_cross_validation_rfe,
-            'y_test_predicted_rfe': y_test_predicted_rfe,
-            'y_target_predicted_rfe': y_target_predicted_rfe}
+    x_target_rfe_scaled = rfe_model_dict['scaler'].transform(x_target_rfe)
+    rfe_model_dict['y_target_predicted_rfe'] = rfe_model_dict['model_rfe'].predict(x_target_rfe_scaled)
+    return rfe_model_dict
 
 
 def summary_plot(y_train, y_test, y_train_predicted, y_train_cross_validation, y_test_predicted,
@@ -303,5 +275,5 @@ def summary_plot(y_train, y_test, y_train_predicted, y_train_cross_validation, y
     plt.tick_params(axis='y', direction='inout', length=4)
     plt.tick_params(axis='x', direction='inout', length=4)
 
-    plt.show()
+    #plt.show()
     return f
