@@ -277,3 +277,28 @@ def summary_plot(y_train, y_test, y_train_predicted, y_train_cross_validation, y
 
     #plt.show()
     return f
+
+
+def run_predict_workflow(args):
+    target_book = import_query_data(args['query'])
+    target_input_type, target_input_errors = check_inputs(target_book, column_title=args['identifier'])
+    if len(target_input_errors) > 0:
+        # instead of exiting, remove error entries from each book
+        target_book = target_book[~target_book[args['identifier']].isin(target_input_errors)]
+    x_target = variable_assigner(target_book, column_title=args['identifier'], input_type=target_input_type,
+                                 book_is_target=True)
+
+    with open(args['model'], 'rb') as model_file:
+        models = pickle.load(model_file)
+    initial_model = models[0]
+    rfe_model = models[1]
+
+    initial_prediction = initial_ccs_prediction(initial_model, x_target, outlier_removal=False, threshold=1000)
+    rfe_prediction = rfe_ccs_prediction(rfe_model, initial_prediction['x_target_clean'],
+                                        initial_prediction['x_train_clean'], rfe_model['rfecv'])
+
+    target_book_output = target_book.copy()
+    #target_book_output['Target CCS Prediction'] = initial_prediction['y_target_predicted']
+    target_book_output['Target CCS Prediction RFE VS'] = rfe_prediction['y_target_predicted_rfe']
+
+    target_book_output.to_csv(os.path.join(args['output'], 'target_book_output.csv'), index=False)
