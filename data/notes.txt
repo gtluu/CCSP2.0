@@ -1,3 +1,0 @@
-- need columns "CID", "InChI", or "SMILES"
-- CCS column title should be capitalized
-- input data should not have multiply charge species

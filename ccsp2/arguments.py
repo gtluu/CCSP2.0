@@ -19,6 +19,8 @@ def get_args():
     model.add_argument('--test', help='test dataset', default='', type=str)
     model.add_argument('--split_percentage', help='percentage to split training dataset into test and train sets',
                        default=50, type=int)
+    model.add_argument('--model_fname', help='filename for model to be saved. default is "model"',
+                       default='model', type=str)
     model.add_argument('--plot', help='output plots during analysis', action='store_true')
 
     predict = parser.add_argument_group('Prediction Parameters')
