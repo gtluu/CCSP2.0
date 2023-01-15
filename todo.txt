@@ -1,4 +1,3 @@
 - write script to grab smiles or inchi from pubchem? or somewhere
 - write scripts to work with data from databases for prediction (i.e. GNPS, NPAtlas, COCONUT)
-- remove plot showing
 - fix pickling messing up initial prediction values
