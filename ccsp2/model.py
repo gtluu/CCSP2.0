@@ -5,6 +5,7 @@ import time
 import tkinter as tk
 from multiprocessing import freeze_support
 import os
+import pickle
 from sys import stdout
 from tkinter.filedialog import asksaveasfile
 from tkinter import *
