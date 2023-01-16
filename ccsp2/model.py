@@ -24,7 +24,10 @@ from sklearn.model_selection import GridSearchCV, StratifiedShuffleSplit, cross_
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVR
 from sklearn.utils import shuffle
+from ccsp2.arguments import *
 from ccsp2.data_io import *
+from ccsp2.model import *
+from ccsp2.predict import *
 
 
 def calculate_descriptors(input_list, input_type='InChI'):
