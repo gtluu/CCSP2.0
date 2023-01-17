@@ -1,5 +1,0 @@
-CCS database obtained from Baker Lab Portal:
-https://brcwebportal.cos.ncsu.edu/baker/data/ccs.tsv
-
-Unified CCS Compendium
-https://mcleanresearchgroup.shinyapps.io/CCS-Compendium/
