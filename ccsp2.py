@@ -13,23 +13,24 @@ def run_ccsp2(args):
     elif args['test'] == '':
         train_book, test_book = import_training_data(args['train'], split_percentage=args['split_percentage'])
     target_book = import_query_data(args['query'])
-    train_input_type, train_input_errors = check_inputs(train_book, column_title=args['identifier'])
-    test_input_type, test_input_errors = check_inputs(test_book, column_title=args['identifier'])
-    target_input_type, target_input_errors = check_inputs(target_book, column_title=args['identifier'])
+    train_input_type, train_input_errors = check_inputs(train_book, column_title=args['train_test_identifier'])
+    test_input_type, test_input_errors = check_inputs(test_book, column_title=args['train_test_identifier'])
+    target_input_type, target_input_errors = check_inputs(target_book, column_title=args['target_identifier'])
 
     if len(train_input_errors) + len(test_input_errors) + len(target_input_errors) > 0:
         # instead of exiting, remove error entries from each book
-        train_book = train_book[~train_book[args['identifier']].isin(train_input_errors)]
-        test_book = test_book[~test_book[args['identifier']].isin(test_input_errors)]
-        target_book = target_book[~target_book[args['identifier']].isin(target_input_errors)]
+        train_book = train_book[~train_book[args['train_test_identifier']].isin(train_input_errors)]
+        test_book = test_book[~test_book[args['train_test_identifier']].isin(test_input_errors)]
+        target_book = target_book[~target_book[args['target_identifier']].isin(target_input_errors)]
 
-    x_train, y_train, x_test, y_test, x_target = variable_assigner(train_book,
-                                                                   test_book,
-                                                                   target_book,
-                                                                   column_title=args['identifier'],
-                                                                   train_input_type=train_input_type,
-                                                                   test_input_type=test_input_type,
-                                                                   target_input_type=target_input_type)
+    x_train, y_train, x_test, y_test = train_test_variable_assigner(train_book,
+                                                                    test_book,
+                                                                    column_title=args['train_test_identifier'],
+                                                                    train_input_type=train_input_type,
+                                                                    test_input_type=test_input_type)
+    x_target = target_variable_assigner(target_book,
+                                        column_title=args['target_identifier'],
+                                        target_input_type=target_input_type)
     initial_prediction = initial_ccs_prediction(x_train,
                                                 y_train,
                                                 x_test,

@@ -99,7 +99,7 @@ def prediction_plot(true_values, predicted_values, input_book, hover_column=['Co
                               y0=min(min(true_values), min(predicted_values)),
                               y1=max(max(true_values), max(predicted_values)),
                               line=dict(dash='dash'))
-    predict_plot_px.show()
+    #predict_plot_px.show()
     return predict_plot_px
 
 
@@ -119,7 +119,7 @@ def model_diagnostics_plot(x_block, model_name):
     model_dx_plot_px.update_xaxes(title_text='Descriptor Number',
                                   title_font={'size': 15},
                                   title_standoff=25)
-    model_dx_plot_px.show()
+    #model_dx_plot_px.show()
     return model_dx_plot_px
 
 
@@ -303,5 +303,5 @@ def summary_plot(y_train, y_test, y_train_predicted, y_train_cross_validation, y
     plt.tick_params(axis='y', direction='inout', length=4)
     plt.tick_params(axis='x', direction='inout', length=4)
 
-    plt.show()
+    #plt.show()
     return f

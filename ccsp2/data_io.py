@@ -24,7 +24,7 @@ from sklearn.model_selection import GridSearchCV, StratifiedShuffleSplit, cross_
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVR
 from sklearn.utils import shuffle
-import io
+from IPython.utils import io
 
 
 def import_training_data(train_book_path, split_percentage=50, test_book_path=None):
@@ -51,15 +51,15 @@ def check_inputs(book, column_title='Input'):
             compound = pcp.get_compounds(i, 'cid')
             if Chem.MolFromSmiles(compound[0].isomeric_smiles) is None:
                 input_errors.append(i)
-    elif 'InChI' in list(book[column_title])[0]:
-        input_type = 'InChI'
-        for i in book[column_title]:
-            if Chem.MolFromInchi(i) is None:
-                input_errors.append(i)
-    else:
+    elif column_title == 'SMILES':
         input_type = 'SMILES'
         for i in book[column_title]:
             if Chem.MolFromSmiles(i) is None:
+                input_errors.append(i)
+    elif column_title == 'InChI':
+        input_type = 'InChI'
+        for i in book[column_title]:
+            if Chem.MolFromInchi(i) is None:
                 input_errors.append(i)
     return input_type, input_errors
 

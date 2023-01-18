@@ -43,19 +43,23 @@ def calculate_descriptors(input_list, input_type='InChI'):
     return descriptor_list
 
 
-def variable_assigner(train_book,
-                      test_book,
-                      target_book,
-                      column_title='Input',
-                      train_input_type='InChI',
-                      test_input_type='InChI',
-                      target_input_type='InChI'):
+def train_test_variable_assigner(train_book,
+                                 test_book,
+                                 column_title='Input',
+                                 train_input_type='InChI',
+                                 test_input_type='InChI'):
     x_train = calculate_descriptors(train_book[column_title], train_input_type)
     x_test = calculate_descriptors(test_book[column_title], test_input_type)
-    x_target = calculate_descriptors(target_book[column_title], test_input_type)
     y_train = list(train_book['CCS'])
     y_test = list(test_book['CCS'])
-    return x_train, y_train, x_test, y_test, x_target
+    return x_train, y_train, x_test, y_test
+
+
+def target_variable_assigner(target_book,
+                             column_title='Input',
+                             target_input_type='SMILES'):
+    x_target = calculate_descriptors(target_book[column_title], target_input_type)
+    return x_target
 
 
 def clean_up_descriptors(input_frame):
